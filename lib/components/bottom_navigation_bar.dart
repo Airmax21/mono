@@ -11,7 +11,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      height: getProportionateScreenHeight(60),
+      height: getProportionateScreenHeight(55),
       decoration: BoxDecoration(
         color: Get.theme.primaryColor.withOpacity(0.8),
         borderRadius: BorderRadius.vertical(top: Radius.circular(10)),

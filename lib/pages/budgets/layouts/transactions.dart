@@ -100,7 +100,7 @@ class Transactions extends StatelessWidget {
     final grouped = groupBy(transactions, (tx) => tx['date']);
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -112,40 +112,42 @@ class Transactions extends StatelessWidget {
           SizedBox(
             height: getProportionateScreenHeight(15),
           ),
-          // ListView(
-          //   children: grouped.entries.map((entry) {
-          //     final date = entry.key;
-          //     final txs = entry.value;
+          ListView(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            children: grouped.entries.map((entry) {
+              final date = entry.key;
+              final txs = entry.value;
 
-          //     return Column(
-          //       crossAxisAlignment: CrossAxisAlignment.start,
-          //       children: [
-          //         Padding(
-          //           padding:
-          //               EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-          //           child: Text(
-          //             date,
-          //             style: Get.textTheme.titleSmall,
-          //           ),
-          //         ),
-          //         // ...txs.map((tx) {
-          //         //   return Column(
-          //         //     children: [
-          //         //       TransactionItem(
-          //         //         icons: categoryIcon[tx["category"]] ??
-          //         //             Icons.help_outline,
-          //         //         title: tx["title"],
-          //         //         amount: tx["amount"],
-          //         //         isIncome: tx["isIncome"],
-          //         //         date: tx["date"],
-          //         //       ),
-          //         //     ],
-          //         //   );
-          //         // }).toList()
-          //       ],
-          //     );
-          //   }).toList(),
-          // )
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 8.0),
+                    child: Text(
+                      date,
+                      style: Get.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w200),
+                    ),
+                  ),
+                  ...txs.map((tx) {
+                    return Column(
+                      children: [
+                        TransactionItem(
+                          icons: categoryIcon[tx["category"]] ??
+                              Icons.help_outline,
+                          title: tx["title"],
+                          amount: tx["amount"],
+                          isIncome: tx["isIncome"],
+                          date: tx["date"],
+                        ),
+                      ],
+                    );
+                  })
+                ],
+              );
+            }).toList(),
+          )
         ],
       ),
     );
