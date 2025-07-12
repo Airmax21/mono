@@ -6,25 +6,25 @@ import 'package:mono_app/size_config.dart';
 
 final List<Map<String, dynamic>> budgets = [
   {
-    "category": "food",
+    "category": Category.food,
     "title": "Makan",
     "amount": "Rp. 20k",
     "progress": 0.35,
   },
   {
-    "category": "shopping",
+    "category": Category.shopping,
     "title": "Olshop",
     "amount": "Rp. 200k",
     "progress": 0.65,
   },
   {
-    "category": "bills",
+    "category": Category.bills,
     "title": "Listrik",
     "amount": "Rp. 50k",
     "progress": 0.35,
   },
   {
-    "category": "healthcare",
+    "category": Category.healthcare,
     "title": "Dokter",
     "amount": "Rp. 200k",
     "progress": 0.75,
@@ -43,7 +43,7 @@ class MonthlyBudgets extends StatelessWidget {
         children: [
           Text(
             'Monthly Budgets',
-            style: Get.textTheme.titleSmall,
+            style: Get.textTheme.titleMedium,
           ),
           SizedBox(
             height: getProportionateScreenHeight(10),

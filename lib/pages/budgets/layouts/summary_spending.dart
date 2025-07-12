@@ -29,30 +29,6 @@ final List<Map<String, dynamic>> getSectionsData = [
     'label': '40%',
     'title': 'Dokter',
   },
-  {
-    'color': Colors.blue,
-    'value': 25,
-    'label': '25%',
-    'title': 'Makan',
-  },
-  {
-    'color': Colors.green,
-    'value': 20,
-    'label': '20%',
-    'title': 'Olshop',
-  },
-  {
-    'color': Colors.orange,
-    'value': 15,
-    'label': '15%',
-    'title': 'Listrik',
-  },
-  {
-    'color': Colors.red,
-    'value': 40,
-    'label': '40%',
-    'title': 'Dokter',
-  },
 ];
 
 List<PieChartSectionData> getSections(int touchedIndex) {
@@ -89,14 +65,14 @@ class SummarySpending extends StatelessWidget {
         children: [
           Text(
             'Your Account Spendings',
-            style: Get.textTheme.titleSmall,
+            style: Get.textTheme.titleMedium,
           ),
           SizedBox(
             height: getProportionateScreenHeight(20),
           ),
           Container(
             decoration: BoxDecoration(
-              color: Get.theme.canvasColor,
+              color: Get.theme.primaryColor,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(

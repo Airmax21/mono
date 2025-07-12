@@ -17,7 +17,7 @@ class AnimationControllerX extends GetxController
 
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 5),
     )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
           bool onboardingRead = false;

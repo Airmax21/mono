@@ -24,7 +24,7 @@ class BudgetCard extends StatelessWidget {
       margin: EdgeInsets.only(right: 15),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Get.theme.canvasColor,
+        color: Get.theme.primaryColor,
         borderRadius: BorderRadius.circular(12)
       ),
       child: Row(

@@ -19,7 +19,7 @@ class TextSplash extends StatelessWidget {
             duration: const Duration(seconds: 1),
             child: Text(
               'MoNo',
-              style: Get.textTheme.titleLarge,
+              style: Get.textTheme.displaySmall,
             ),
           ),
         );

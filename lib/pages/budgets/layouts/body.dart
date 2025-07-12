@@ -13,7 +13,7 @@ class Body extends StatelessWidget {
       child: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: getProportionateScreenHeight(30),),
+            SizedBox(height: getProportionateScreenHeight(10),),
             MonthlyBudgets(),
             SizedBox(height: getProportionateScreenHeight(10),),
             SummarySpending(),

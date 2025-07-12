@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:mono_app/components/bottom_navigation_bar.dart';
 import 'package:mono_app/pages/dashboard/layouts/body.dart';
 import 'package:mono_app/size_config.dart';
 
-class Dashboard extends StatelessWidget{
+class Dashboard extends StatelessWidget {
   static String routeName = '/dashboard';
 
   const Dashboard({super.key});
@@ -12,9 +13,15 @@ class Dashboard extends StatelessWidget{
   Widget build(BuildContext context) {
     // TODO: implement build
     SizeConfig().init(context);
-    return const Scaffold(
-      body: Body(),
-      bottomNavigationBar: CustomBottomNavigationBar(pageIndex: 0),
+    return Scaffold(
+      body: const Body(),
+      extendBody: true,
+      bottomNavigationBar:
+          SafeArea(child: CustomBottomNavigationBar(pageIndex: 0)),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Get.toNamed('/transactions'),
+        child: Icon(Icons.add)
+      ),
     );
   }
 }

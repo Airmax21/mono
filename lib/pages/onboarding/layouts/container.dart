@@ -15,30 +15,30 @@ class ContainerOnboarding extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          color: Get.isDarkMode ? Colors.blue[900] : Colors.white,
+          color: Get.theme.scaffoldBackgroundColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30))),
       height: getProportionateScreenHeight(350),
       width: double.infinity,
       child: Column(
         children: [
           SizedBox(
-            height: getProportionateScreenHeight(50),
+            height: getProportionateScreenHeight(20),
           ),
           Text(
             'onboard_header'.tr,
             textAlign: TextAlign.center,
-            style: Get.textTheme.headlineLarge,
+            style: Get.textTheme.headlineSmall,
           ),
           SizedBox(
-            height: getProportionateScreenHeight(30),
+            height: getProportionateScreenHeight(20),
           ),
           Text(
             'onboard_description'.tr,
             textAlign: TextAlign.center,
-            style: Get.textTheme.headlineSmall,
+            style: Get.textTheme.bodyMedium,
           ),
           SizedBox(
-            height: getProportionateScreenHeight(50),
+            height: getProportionateScreenHeight(60),
           ),
           ElevatedButton(
             onPressed: () {
@@ -47,7 +47,7 @@ class ContainerOnboarding extends StatelessWidget {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor:
-                  Get.isDarkMode ? Colors.white : Colors.blue[900],
+                  Get.theme.primaryColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -58,9 +58,7 @@ class ContainerOnboarding extends StatelessWidget {
             ),
             child: Text(
               'onboard_button'.tr,
-              style: TextStyle(
-                  color: Get.isDarkMode ? Colors.blue[900] : Colors.white,
-                  fontSize: 16),
+              style: Get.textTheme.bodyLarge,
             ),
           ),
         ],

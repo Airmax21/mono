@@ -11,39 +11,48 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      height: getProportionateScreenHeight(55),
+      height: getProportionateScreenHeight(60),
       decoration: BoxDecoration(
-        color: Get.theme.primaryColor.withOpacity(0.8),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+        color: Get.theme.primaryColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        boxShadow: [
+          BoxShadow(color: Get.theme.shadowColor, blurRadius: 8),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          IconButton(
-              onPressed: () => Get.offNamed('/dashboard'),
-              icon: pageIndex == 0
-                  ? Icon(Icons.home, color: Colors.white70, size: 30)
-                  : Icon(Icons.home_outlined, color: Colors.white70, size: 30)),
-          IconButton(
-              onPressed: () => Get.offNamed('/budgets'),
-              icon: pageIndex == 1
-                  ? Icon(Icons.account_balance_wallet,
-                      color: Colors.white70, size: 30)
-                  : Icon(Icons.account_balance_wallet_outlined,
-                      color: Colors.white70, size: 30)),
-          IconButton(
-              onPressed: () => Get.offNamed('/dashboard'),
-              icon: pageIndex == 2
-                  ? Icon(Icons.analytics, color: Colors.white70, size: 30)
-                  : Icon(Icons.analytics_outlined,
-                      color: Colors.white70, size: 30)),
-          IconButton(
-              onPressed: () => Get.offNamed('/dashboard'),
-              icon: pageIndex == 3
-                  ? Icon(Icons.manage_accounts, color: Colors.white70, size: 30)
-                  : Icon(Icons.manage_accounts_outlined,
-                      color: Colors.white70, size: 30)),
+          _buildNavItem(0, '/dashboard', Icons.home, Icons.home_outlined),
+          _buildNavItem(
+              1, '/budgets', Icons.attach_money, Icons.attach_money_outlined),
+          _buildNavItem(
+              2, '/statistics', Icons.analytics, Icons.analytics_outlined),
+          _buildNavItem(3, '/wallets', Icons.wallet, Icons.wallet_outlined),
+          _buildNavItem(4, '/account', Icons.manage_accounts,
+              Icons.manage_accounts_outlined),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(
+      int idx, String route, IconData iconActive, IconData iconOutline) {
+    final isActive = idx == pageIndex;
+    return IconButton(
+      onPressed: () => Get.offNamed(route),
+      icon: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.all(isActive ? 8 : 4),
+        decoration: BoxDecoration(
+          color: isActive ? Colors.white24 : Colors.transparent,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          isActive ? iconActive : iconOutline,
+          color: isActive ? Colors.white : Color(0xFF969EC2),
+          size: isActive ? 30 : 26,
+        ),
       ),
     );
   }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class TransactionItem extends StatelessWidget {
   final IconData icons;
   final String title;
-  final String amount;
+  final double amount;
   final bool isIncome;
-  final String date;
+  final DateTime date;
 
   const TransactionItem({
     super.key,
@@ -24,7 +25,7 @@ class TransactionItem extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            this.icons,
+            icons,
             size: 22,
           ),
           const SizedBox(width: 12),
@@ -36,14 +37,14 @@ class TransactionItem extends StatelessWidget {
                     style: Get.textTheme.bodySmall
                         ?.copyWith(fontWeight: FontWeight.w500)),
                 SizedBox(height: 4),
-                Text(date,
+                Text(DateFormat('dd MMMM yyyy HH:mm').format(date),
                     style: Get.textTheme.bodySmall
                         ?.copyWith(fontSize: 12, color: Colors.grey[600])),
               ],
             ),
           ),
           Text(
-            amount,
+            "Rp. ${NumberFormat('#,##0', 'id_ID').format(amount)}",
             style: Get.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.bold,
               color: isIncome ? Colors.green : Colors.red,

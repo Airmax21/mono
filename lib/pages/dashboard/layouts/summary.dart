@@ -20,11 +20,27 @@ class Summary extends StatelessWidget {
                 gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Get.theme.primaryColor, Colors.blueAccent]),
+                    colors: [
+                      Get.theme.primaryColor,
+                      Get.theme.scaffoldBackgroundColor
+                    ]),
                 borderRadius: BorderRadius.circular(16)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // DropdownButton<String>(
+                //   dropdownColor: Colors.blueAccent,
+                //   value: 'February',
+                //   style: TextStyle(color: Colors.white),
+                //   onChanged: (String? newValue) {},
+                //   items: <String>['January', 'February', 'March']
+                //       .map<DropdownMenuItem<String>>((String value) {
+                //     return DropdownMenuItem<String>(
+                //       value: value,
+                //       child: Text(value),
+                //     );
+                //   }).toList(),
+                // ),
                 Text(
                   'Saldo',
                   style: Get.textTheme.bodyMedium,
@@ -35,32 +51,19 @@ class Summary extends StatelessWidget {
                   style: Get.textTheme.titleMedium,
                 ),
                 SizedBox(
-                  height: getProportionateScreenHeight(16),
+                  height: getProportionateScreenHeight(20),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    DropdownButton<String>(
-                      dropdownColor: Colors.blueAccent,
-                      value: 'February',
-                      style: TextStyle(color: Colors.white),
-                      onChanged: (String? newValue) {},
-                      items: <String>['January', 'February', 'March']
-                          .map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
                     Text(
-                      'Total',
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+                      'Last 3 Months',
+                      style: Get.textTheme.titleMedium,
                     )
                   ],
                 ),
                 SizedBox(
-                  height: getProportionateScreenHeight(16),
+                  height: getProportionateScreenHeight(20),
                 ),
                 SizedBox(
                   height: getProportionateScreenHeight(120),
@@ -71,46 +74,41 @@ class Summary extends StatelessWidget {
                       borderData: FlBorderData(show: false),
                       lineBarsData: [
                         LineChartBarData(
-                            spots: [
-                              FlSpot(0, 1000),
-                              FlSpot(1, 1090),
-                              FlSpot(2, 980),
-                              FlSpot(3, 1050),
-                              FlSpot(4, 1020),
-                              FlSpot(5, 1000),
-                              FlSpot(6, 1090),
-                              FlSpot(7, 980),
-                              FlSpot(8, 1050),
-                              FlSpot(9, 1020),
-                            ],
-                            isCurved: false,
-                            color: Colors.lightBlueAccent,
-                            barWidth: 3,
-                            dotData: FlDotData(show: true),
-                            belowBarData: BarAreaData(
-                                show: true,
-                                color:
-                                    Colors.lightBlueAccent.withOpacity(0.3))),
+                          spots: [
+                            FlSpot(0, 1000),
+                            FlSpot(1, 1090),
+                            FlSpot(2, 980),
+                            FlSpot(3, 1050),
+                            FlSpot(4, 1020),
+                            FlSpot(5, 1000),
+                            FlSpot(6, 1090),
+                            FlSpot(7, 980),
+                            FlSpot(8, 1050),
+                            FlSpot(9, 1020),
+                          ],
+                          isCurved: true,
+                          color: Colors.green,
+                          barWidth: 3,
+                          dotData: FlDotData(show: true),
+                        ),
                         LineChartBarData(
-                            spots: [
-                              FlSpot(0, 1010),
-                              FlSpot(1, 1050),
-                              FlSpot(2, 1000),
-                              FlSpot(3, 1000),
-                              FlSpot(4, 1040),
-                              FlSpot(5, 990),
-                              FlSpot(6, 1090),
-                              FlSpot(7, 910),
-                              FlSpot(8, 1030),
-                              FlSpot(9, 1000),
-                            ],
-                            isCurved: false,
-                            color: Colors.redAccent,
-                            barWidth: 3,
-                            dotData: FlDotData(show: true),
-                            belowBarData: BarAreaData(
-                                show: true,
-                                color: Colors.redAccent.withOpacity(0.3))),
+                          spots: [
+                            FlSpot(0, 1010),
+                            FlSpot(1, 1050),
+                            FlSpot(2, 1000),
+                            FlSpot(3, 1000),
+                            FlSpot(4, 1040),
+                            FlSpot(5, 990),
+                            FlSpot(6, 1090),
+                            FlSpot(7, 910),
+                            FlSpot(8, 1030),
+                            FlSpot(9, 1000),
+                          ],
+                          isCurved: true,
+                          color: Colors.redAccent,
+                          barWidth: 3,
+                          dotData: FlDotData(show: true),
+                        ),
                       ],
                     ),
                   ),
@@ -133,15 +131,15 @@ class Summary extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start, // Rata kiri
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Income',
-                            style: Get.textTheme.bodySmall
-                                ?.copyWith(color: Colors.green)),
+                        // Text('Income',
+                        //     style: Get.textTheme.bodyMedium
+                        //         ?.copyWith(color: Colors.green)),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
                               'Rp. 10K',
-                              style: Get.textTheme.bodySmall
+                              style: Get.textTheme.bodyMedium
                                   ?.copyWith(color: Colors.green),
                             ),
                             SizedBox(width: 4),
@@ -161,15 +159,15 @@ class Summary extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start, // Rata kiri
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Expense',
-                            style: Get.textTheme.bodySmall
-                                ?.copyWith(color: Colors.red)),
+                        // Text('Expense',
+                        //     style: Get.textTheme.bodyMedium
+                        //         ?.copyWith(color: Colors.red)),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
                               '-Rp. 10K',
-                              style: Get.textTheme.bodySmall
+                              style: Get.textTheme.bodyMedium
                                   ?.copyWith(color: Colors.red),
                             ),
                             SizedBox(width: 4),
@@ -189,15 +187,15 @@ class Summary extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start, // Rata kiri
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Shift',
-                            style: Get.textTheme.bodySmall
-                                ?.copyWith(color: Colors.lightBlue)),
+                        // Text('Shift',
+                        //     style: Get.textTheme.bodyMedium
+                        //         ?.copyWith(color: Colors.lightBlue)),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
                               'Rp. 10K',
-                              style: Get.textTheme.bodySmall
+                              style: Get.textTheme.bodyMedium
                                   ?.copyWith(color: Colors.lightBlue),
                             ),
                             SizedBox(width: 4),
