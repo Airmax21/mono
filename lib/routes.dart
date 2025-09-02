@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
+import 'package:mono_app/bindings/budgets_binding.dart';
 import 'package:mono_app/bindings/transactions_binding.dart';
 import 'package:mono_app/bindings/wallet_binding.dart';
 import 'package:mono_app/pages/budgets/budgets.dart';
+import 'package:mono_app/pages/budgets_list/budgets_list.dart';
 import 'package:mono_app/pages/dashboard/dashboard.dart';
 import 'package:mono_app/pages/onboarding/onboarding.dart';
 import 'package:mono_app/pages/splash/splash_screen.dart';
@@ -30,6 +32,13 @@ final List<GetPage> routes = [
     page: () => const Budgets(),
     bindings: [
       TransactionsBinding()
+    ]
+  ),
+  GetPage(
+    name: BudgetsList.routeName,
+    page: () => const BudgetsList(),
+    bindings: [
+      BudgetsBinding()
     ]
   ),
   GetPage(

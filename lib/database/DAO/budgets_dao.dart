@@ -12,9 +12,7 @@ class BudgetsDao extends DatabaseAccessor<DBConnection> with _$BudgetsDaoMixin {
 
   Stream<List<Budget>> watchAllBudgets() => select(budgets).watch();
 
-  Future<List<Budget>> getBudgetsByFilter({
-    String? category
-  }) {
+  Future<List<Budget>> getBudgetsByFilter(String? category) {
     final query = select(budgets);
 
     if (category != null && category.isNotEmpty) {

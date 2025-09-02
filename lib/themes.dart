@@ -49,8 +49,10 @@ class Themes {
     scaffoldBackgroundColor: const Color(0xFF121421),
     shadowColor: Color(0xFF262B45),
     canvasColor: Colors.black,
+    dialogBackgroundColor: const Color(0xFF1C1F30),
     appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF1C1F30),
+      backgroundColor: Color(0xFF121421),
+      surfaceTintColor: Color(0xFF121421),
       foregroundColor: Colors.white70,
       elevation: 1,
       centerTitle: true,

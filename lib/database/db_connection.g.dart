@@ -865,6 +865,11 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
   late final GeneratedColumn<double> amount = GeneratedColumn<double>(
       'amount', aliasedName, false,
       type: DriftSqlType.double, requiredDuringInsert: true);
+  static const VerificationMeta _spentMeta = const VerificationMeta('spent');
+  @override
+  late final GeneratedColumn<double> spent = GeneratedColumn<double>(
+      'spent', aliasedName, false,
+      type: DriftSqlType.double, requiredDuringInsert: true);
   static const VerificationMeta _periodMeta = const VerificationMeta('period');
   @override
   late final GeneratedColumnWithTypeConverter<BudgetPeriod, String> period =
@@ -890,8 +895,8 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
       const VerificationMeta('endDate');
   @override
   late final GeneratedColumn<DateTime> endDate = GeneratedColumn<DateTime>(
-      'end_date', aliasedName, false,
-      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+      'end_date', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         createdAt,
@@ -899,6 +904,7 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
         id,
         walletId,
         amount,
+        spent,
         period,
         category,
         startDate,
@@ -935,6 +941,12 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
     } else if (isInserting) {
       context.missing(_amountMeta);
     }
+    if (data.containsKey('spent')) {
+      context.handle(
+          _spentMeta, spent.isAcceptableOrUnknown(data['spent']!, _spentMeta));
+    } else if (isInserting) {
+      context.missing(_spentMeta);
+    }
     context.handle(_periodMeta, const VerificationResult.success());
     context.handle(_categoryMeta, const VerificationResult.success());
     if (data.containsKey('start_date')) {
@@ -944,8 +956,6 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
     if (data.containsKey('end_date')) {
       context.handle(_endDateMeta,
           endDate.isAcceptableOrUnknown(data['end_date']!, _endDateMeta));
-    } else if (isInserting) {
-      context.missing(_endDateMeta);
     }
     return context;
   }
@@ -966,6 +976,8 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
           .read(DriftSqlType.string, data['${effectivePrefix}wallet_id']),
       amount: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}amount'])!,
+      spent: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}spent'])!,
       period: $BudgetsTable.$converterperiod.fromSql(attachedDatabase
           .typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}period'])!),
@@ -975,7 +987,7 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
       startDate: attachedDatabase.typeMapping
           .read(DriftSqlType.dateTime, data['${effectivePrefix}start_date'])!,
       endDate: attachedDatabase.typeMapping
-          .read(DriftSqlType.dateTime, data['${effectivePrefix}end_date'])!,
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}end_date']),
     );
   }
 
@@ -996,20 +1008,22 @@ class Budget extends DataClass implements Insertable<Budget> {
   final String id;
   final String? walletId;
   final double amount;
+  final double spent;
   final BudgetPeriod period;
   final Category category;
   final DateTime startDate;
-  final DateTime endDate;
+  final DateTime? endDate;
   const Budget(
       {required this.createdAt,
       this.updatedAt,
       required this.id,
       this.walletId,
       required this.amount,
+      required this.spent,
       required this.period,
       required this.category,
       required this.startDate,
-      required this.endDate});
+      this.endDate});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -1022,6 +1036,7 @@ class Budget extends DataClass implements Insertable<Budget> {
       map['wallet_id'] = Variable<String>(walletId);
     }
     map['amount'] = Variable<double>(amount);
+    map['spent'] = Variable<double>(spent);
     {
       map['period'] =
           Variable<String>($BudgetsTable.$converterperiod.toSql(period));
@@ -1031,7 +1046,9 @@ class Budget extends DataClass implements Insertable<Budget> {
           Variable<String>($BudgetsTable.$convertercategory.toSql(category));
     }
     map['start_date'] = Variable<DateTime>(startDate);
-    map['end_date'] = Variable<DateTime>(endDate);
+    if (!nullToAbsent || endDate != null) {
+      map['end_date'] = Variable<DateTime>(endDate);
+    }
     return map;
   }
 
@@ -1046,10 +1063,13 @@ class Budget extends DataClass implements Insertable<Budget> {
           ? const Value.absent()
           : Value(walletId),
       amount: Value(amount),
+      spent: Value(spent),
       period: Value(period),
       category: Value(category),
       startDate: Value(startDate),
-      endDate: Value(endDate),
+      endDate: endDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endDate),
     );
   }
 
@@ -1062,10 +1082,11 @@ class Budget extends DataClass implements Insertable<Budget> {
       id: serializer.fromJson<String>(json['id']),
       walletId: serializer.fromJson<String?>(json['walletId']),
       amount: serializer.fromJson<double>(json['amount']),
+      spent: serializer.fromJson<double>(json['spent']),
       period: serializer.fromJson<BudgetPeriod>(json['period']),
       category: serializer.fromJson<Category>(json['category']),
       startDate: serializer.fromJson<DateTime>(json['startDate']),
-      endDate: serializer.fromJson<DateTime>(json['endDate']),
+      endDate: serializer.fromJson<DateTime?>(json['endDate']),
     );
   }
   @override
@@ -1077,10 +1098,11 @@ class Budget extends DataClass implements Insertable<Budget> {
       'id': serializer.toJson<String>(id),
       'walletId': serializer.toJson<String?>(walletId),
       'amount': serializer.toJson<double>(amount),
+      'spent': serializer.toJson<double>(spent),
       'period': serializer.toJson<BudgetPeriod>(period),
       'category': serializer.toJson<Category>(category),
       'startDate': serializer.toJson<DateTime>(startDate),
-      'endDate': serializer.toJson<DateTime>(endDate),
+      'endDate': serializer.toJson<DateTime?>(endDate),
     };
   }
 
@@ -1090,20 +1112,22 @@ class Budget extends DataClass implements Insertable<Budget> {
           String? id,
           Value<String?> walletId = const Value.absent(),
           double? amount,
+          double? spent,
           BudgetPeriod? period,
           Category? category,
           DateTime? startDate,
-          DateTime? endDate}) =>
+          Value<DateTime?> endDate = const Value.absent()}) =>
       Budget(
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt.present ? updatedAt.value : this.updatedAt,
         id: id ?? this.id,
         walletId: walletId.present ? walletId.value : this.walletId,
         amount: amount ?? this.amount,
+        spent: spent ?? this.spent,
         period: period ?? this.period,
         category: category ?? this.category,
         startDate: startDate ?? this.startDate,
-        endDate: endDate ?? this.endDate,
+        endDate: endDate.present ? endDate.value : this.endDate,
       );
   Budget copyWithCompanion(BudgetsCompanion data) {
     return Budget(
@@ -1112,6 +1136,7 @@ class Budget extends DataClass implements Insertable<Budget> {
       id: data.id.present ? data.id.value : this.id,
       walletId: data.walletId.present ? data.walletId.value : this.walletId,
       amount: data.amount.present ? data.amount.value : this.amount,
+      spent: data.spent.present ? data.spent.value : this.spent,
       period: data.period.present ? data.period.value : this.period,
       category: data.category.present ? data.category.value : this.category,
       startDate: data.startDate.present ? data.startDate.value : this.startDate,
@@ -1127,6 +1152,7 @@ class Budget extends DataClass implements Insertable<Budget> {
           ..write('id: $id, ')
           ..write('walletId: $walletId, ')
           ..write('amount: $amount, ')
+          ..write('spent: $spent, ')
           ..write('period: $period, ')
           ..write('category: $category, ')
           ..write('startDate: $startDate, ')
@@ -1137,7 +1163,7 @@ class Budget extends DataClass implements Insertable<Budget> {
 
   @override
   int get hashCode => Object.hash(createdAt, updatedAt, id, walletId, amount,
-      period, category, startDate, endDate);
+      spent, period, category, startDate, endDate);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1147,6 +1173,7 @@ class Budget extends DataClass implements Insertable<Budget> {
           other.id == this.id &&
           other.walletId == this.walletId &&
           other.amount == this.amount &&
+          other.spent == this.spent &&
           other.period == this.period &&
           other.category == this.category &&
           other.startDate == this.startDate &&
@@ -1159,10 +1186,11 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
   final Value<String> id;
   final Value<String?> walletId;
   final Value<double> amount;
+  final Value<double> spent;
   final Value<BudgetPeriod> period;
   final Value<Category> category;
   final Value<DateTime> startDate;
-  final Value<DateTime> endDate;
+  final Value<DateTime?> endDate;
   final Value<int> rowid;
   const BudgetsCompanion({
     this.createdAt = const Value.absent(),
@@ -1170,6 +1198,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
     this.id = const Value.absent(),
     this.walletId = const Value.absent(),
     this.amount = const Value.absent(),
+    this.spent = const Value.absent(),
     this.period = const Value.absent(),
     this.category = const Value.absent(),
     this.startDate = const Value.absent(),
@@ -1182,21 +1211,23 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
     this.id = const Value.absent(),
     this.walletId = const Value.absent(),
     required double amount,
+    required double spent,
     required BudgetPeriod period,
     required Category category,
     this.startDate = const Value.absent(),
-    required DateTime endDate,
+    this.endDate = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : amount = Value(amount),
+        spent = Value(spent),
         period = Value(period),
-        category = Value(category),
-        endDate = Value(endDate);
+        category = Value(category);
   static Insertable<Budget> custom({
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
     Expression<String>? id,
     Expression<String>? walletId,
     Expression<double>? amount,
+    Expression<double>? spent,
     Expression<String>? period,
     Expression<String>? category,
     Expression<DateTime>? startDate,
@@ -1209,6 +1240,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
       if (id != null) 'id': id,
       if (walletId != null) 'wallet_id': walletId,
       if (amount != null) 'amount': amount,
+      if (spent != null) 'spent': spent,
       if (period != null) 'period': period,
       if (category != null) 'category': category,
       if (startDate != null) 'start_date': startDate,
@@ -1223,10 +1255,11 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
       Value<String>? id,
       Value<String?>? walletId,
       Value<double>? amount,
+      Value<double>? spent,
       Value<BudgetPeriod>? period,
       Value<Category>? category,
       Value<DateTime>? startDate,
-      Value<DateTime>? endDate,
+      Value<DateTime?>? endDate,
       Value<int>? rowid}) {
     return BudgetsCompanion(
       createdAt: createdAt ?? this.createdAt,
@@ -1234,6 +1267,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
       id: id ?? this.id,
       walletId: walletId ?? this.walletId,
       amount: amount ?? this.amount,
+      spent: spent ?? this.spent,
       period: period ?? this.period,
       category: category ?? this.category,
       startDate: startDate ?? this.startDate,
@@ -1259,6 +1293,9 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
     }
     if (amount.present) {
       map['amount'] = Variable<double>(amount.value);
+    }
+    if (spent.present) {
+      map['spent'] = Variable<double>(spent.value);
     }
     if (period.present) {
       map['period'] =
@@ -1288,6 +1325,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
           ..write('id: $id, ')
           ..write('walletId: $walletId, ')
           ..write('amount: $amount, ')
+          ..write('spent: $spent, ')
           ..write('period: $period, ')
           ..write('category: $category, ')
           ..write('startDate: $startDate, ')
@@ -1929,10 +1967,11 @@ typedef $$BudgetsTableCreateCompanionBuilder = BudgetsCompanion Function({
   Value<String> id,
   Value<String?> walletId,
   required double amount,
+  required double spent,
   required BudgetPeriod period,
   required Category category,
   Value<DateTime> startDate,
-  required DateTime endDate,
+  Value<DateTime?> endDate,
   Value<int> rowid,
 });
 typedef $$BudgetsTableUpdateCompanionBuilder = BudgetsCompanion Function({
@@ -1941,10 +1980,11 @@ typedef $$BudgetsTableUpdateCompanionBuilder = BudgetsCompanion Function({
   Value<String> id,
   Value<String?> walletId,
   Value<double> amount,
+  Value<double> spent,
   Value<BudgetPeriod> period,
   Value<Category> category,
   Value<DateTime> startDate,
-  Value<DateTime> endDate,
+  Value<DateTime?> endDate,
   Value<int> rowid,
 });
 
@@ -1971,6 +2011,9 @@ class $$BudgetsTableFilterComposer
 
   ColumnFilters<double> get amount => $composableBuilder(
       column: $table.amount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get spent => $composableBuilder(
+      column: $table.spent, builder: (column) => ColumnFilters(column));
 
   ColumnWithTypeConverterFilters<BudgetPeriod, BudgetPeriod, String>
       get period => $composableBuilder(
@@ -2013,6 +2056,9 @@ class $$BudgetsTableOrderingComposer
   ColumnOrderings<double> get amount => $composableBuilder(
       column: $table.amount, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<double> get spent => $composableBuilder(
+      column: $table.spent, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<String> get period => $composableBuilder(
       column: $table.period, builder: (column) => ColumnOrderings(column));
 
@@ -2049,6 +2095,9 @@ class $$BudgetsTableAnnotationComposer
 
   GeneratedColumn<double> get amount =>
       $composableBuilder(column: $table.amount, builder: (column) => column);
+
+  GeneratedColumn<double> get spent =>
+      $composableBuilder(column: $table.spent, builder: (column) => column);
 
   GeneratedColumnWithTypeConverter<BudgetPeriod, String> get period =>
       $composableBuilder(column: $table.period, builder: (column) => column);
@@ -2091,10 +2140,11 @@ class $$BudgetsTableTableManager extends RootTableManager<
             Value<String> id = const Value.absent(),
             Value<String?> walletId = const Value.absent(),
             Value<double> amount = const Value.absent(),
+            Value<double> spent = const Value.absent(),
             Value<BudgetPeriod> period = const Value.absent(),
             Value<Category> category = const Value.absent(),
             Value<DateTime> startDate = const Value.absent(),
-            Value<DateTime> endDate = const Value.absent(),
+            Value<DateTime?> endDate = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               BudgetsCompanion(
@@ -2103,6 +2153,7 @@ class $$BudgetsTableTableManager extends RootTableManager<
             id: id,
             walletId: walletId,
             amount: amount,
+            spent: spent,
             period: period,
             category: category,
             startDate: startDate,
@@ -2115,10 +2166,11 @@ class $$BudgetsTableTableManager extends RootTableManager<
             Value<String> id = const Value.absent(),
             Value<String?> walletId = const Value.absent(),
             required double amount,
+            required double spent,
             required BudgetPeriod period,
             required Category category,
             Value<DateTime> startDate = const Value.absent(),
-            required DateTime endDate,
+            Value<DateTime?> endDate = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
               BudgetsCompanion.insert(
@@ -2127,6 +2179,7 @@ class $$BudgetsTableTableManager extends RootTableManager<
             id: id,
             walletId: walletId,
             amount: amount,
+            spent: spent,
             period: period,
             category: category,
             startDate: startDate,

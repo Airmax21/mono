@@ -14,6 +14,7 @@ class Transactions extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Form Transactions'),
+        centerTitle: true,
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: Icon(Icons.arrow_back),

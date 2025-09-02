@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:mono_app/size_config.dart';
 
 class BudgetCard extends StatelessWidget {
   final String title;
   final IconData icons;
-  final String amount;
+  final double amount;
   final double progress;
   final Color color;
 
@@ -21,12 +22,12 @@ class BudgetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: getProportionateScreenWidth(250),
+      height: getProportionateScreenHeight(100),
       margin: EdgeInsets.only(right: 15),
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Get.theme.primaryColor,
-        borderRadius: BorderRadius.circular(12)
-      ),
+          color: Get.theme.primaryColor,
+          borderRadius: BorderRadius.circular(12)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -40,10 +41,10 @@ class BudgetCard extends StatelessWidget {
             children: [
               Text(title,
                   style: Get.textTheme.bodySmall
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                      ?.copyWith(fontWeight: FontWeight.bold)),
               SizedBox(height: 4),
-              Text(amount, style: Get.textTheme.bodySmall
-                        ?.copyWith(color: Colors.grey)),
+              Text("Rp. ${NumberFormat('#,##0', 'id_ID').format(amount)}",
+                  style: Get.textTheme.bodySmall?.copyWith(color: Colors.grey)),
               SizedBox(height: 12),
               Stack(
                 children: [

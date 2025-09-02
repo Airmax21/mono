@@ -8,25 +8,25 @@ final List<Map<String, dynamic>> budgets = [
   {
     "category": Category.food,
     "title": "Makan",
-    "amount": "Rp. 20k",
+    "amount": 20000.0,
     "progress": 0.35,
   },
   {
     "category": Category.shopping,
     "title": "Olshop",
-    "amount": "Rp. 200k",
+    "amount": 200000.0,
     "progress": 0.65,
   },
   {
     "category": Category.bills,
     "title": "Listrik",
-    "amount": "Rp. 50k",
+    "amount": 50000.0,
     "progress": 0.35,
   },
   {
     "category": Category.healthcare,
     "title": "Dokter",
-    "amount": "Rp. 200k",
+    "amount": 200000.0,
     "progress": 0.75,
   },
 ];
@@ -50,17 +50,35 @@ class MonthlyBudgets extends StatelessWidget {
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              children: budgets.map((budget) {
-                   return BudgetCard(
-                        icons: categoryIcon[budget["category"]] ?? Icons.help_outline,
-                        title: budget["title"],
-                        amount: "${budget["amount"]}/month",
-                        progress: budget["progress"],
-                        color: categoryColors[budget["category"]] ?? Colors.grey);
-                  }).toList(),
-            ),
-          ) 
+            child: Row(children: [
+              ...budgets.map((budget) {
+                return BudgetCard(
+                    icons:
+                        categoryIcon[budget["category"]] ?? Icons.help_outline,
+                    title: budget["title"],
+                    amount: budget["amount"],
+                    progress: budget["progress"],
+                    color: categoryColors[budget["category"]] ?? Colors.grey);
+              }),
+              Container(
+                  width: getProportionateScreenWidth(50),
+                  height: getProportionateScreenHeight(100),
+                  margin: EdgeInsets.only(right: 15),
+                  decoration: BoxDecoration(
+                    color: Get.theme.primaryColor,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () => Get.toNamed('detail_budgets'),
+                      ),
+                    ],
+                  ))
+            ]),
+          )
         ],
       ),
     );

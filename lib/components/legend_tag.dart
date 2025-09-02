@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mono_app/size_config.dart';
 
 class LegendTag extends StatelessWidget {
   final Color color;
