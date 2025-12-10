@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mono_app/components/budgets_item.dart';
-import 'package:mono_app/pages/budgets_list/controllers/budgets_controller.dart';
+import 'package:mono_app/controllers/budgets_controller.dart';
 
 class BudgetsList extends StatelessWidget {
   const BudgetsList({super.key});

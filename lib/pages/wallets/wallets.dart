@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:mono_app/components/bottom_navigation_bar.dart';
 import 'package:mono_app/pages/wallets/layouts/body.dart';
-import 'package:mono_app/pages/wallets/layouts/form_wallet.dart';
+import 'package:mono_app/pages/wallets/layouts/create_dialog.dart';
 import 'package:mono_app/size_config.dart';
 
 class Wallets extends StatelessWidget {
@@ -20,7 +20,7 @@ class Wallets extends StatelessWidget {
       bottomNavigationBar:
           SafeArea(child: CustomBottomNavigationBar(pageIndex: 3)),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.dialog(FormWallet()),
+        onPressed: () => Get.dialog(CreateDialog()),
         child: Icon(Icons.add),
       ),
     );

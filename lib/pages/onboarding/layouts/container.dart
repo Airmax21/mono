@@ -11,7 +11,6 @@ class ContainerOnboarding extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(

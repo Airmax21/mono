@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
 import 'package:mono_app/pages/transactions/layouts/transactions_form.dart';
 import 'package:mono_app/size_config.dart';
 
@@ -7,14 +8,10 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String? transactionId = Get.arguments as String?;
     return SafeArea(
         child: Column(
-      children: [
-        SizedBox(
-          height: getProportionateScreenHeight(30),
-        ),
-        TransactionsForm()
-      ],
+      children: [Expanded(child: TransactionsForm(id: transactionId))],
     ));
   }
 }

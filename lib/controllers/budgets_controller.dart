@@ -13,16 +13,13 @@ class BudgetsController extends GetxController {
 
   final budgets = <Budget>[].obs;
   final selectedCategory = Rxn<Category>();
-  late TextEditingController amounController;
-
-  
+  final amountController = TextEditingController();
 
   @override
   void onInit() {
     super.onInit();
     fetchBudgets();
-    amounController = TextEditingController();
-    amounController.text = '0';
+    amountController.text = '0';
   }
 
   void fetchBudgets() async {

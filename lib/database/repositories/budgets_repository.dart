@@ -14,10 +14,8 @@ class BudgetsRepository {
     return _dao.watchAllBudgets();
   }
 
-  Future<List<Budget>> getFilteredBudgets({
-    String? category
-  }) {
-    return _dao.getBudgetsByFilter(category);
+  Future<List<Budget>> getFilteredBudgets({String? category}) {
+    return _dao.getBudgetsByFilter(category: category);
   }
 
   Stream<List<Budget>> watchFilteredBudgets({
@@ -26,6 +24,10 @@ class BudgetsRepository {
     return _dao.watchBudgetsByFilter(
       category: category,
     );
+  }
+
+  Future<Budget> getBudgetById({required String id}) {
+    return _dao.getBudgetByID(id: id);
   }
 
   Future<void> addBudgets(BudgetsCompanion data) {

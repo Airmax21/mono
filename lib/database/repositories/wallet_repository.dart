@@ -34,6 +34,10 @@ class WalletRepository {
     );
   }
 
+  Future<WalletData> getWalletByID({required String id}) {
+    return _dao.getWalletByID(id: id);
+  }
+
   Future<void> addWallet(WalletCompanion data) {
     return _dao.insertWallet(data);
   }

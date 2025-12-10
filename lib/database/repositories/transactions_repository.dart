@@ -34,6 +34,10 @@ class TransactionsRepository {
     );
   }
 
+  Future<Transaction> getTransactionById({required String id}) {
+    return _dao.getTransactionById(id: id);
+  }
+
   Future<void> addTransactions(TransactionsCompanion data) {
     return _dao.insertTransactions(data);
   }

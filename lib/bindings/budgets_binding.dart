@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mono_app/database/db_connection.dart';
 import 'package:mono_app/database/repositories/budgets_repository.dart';
-import 'package:mono_app/pages/budgets_list/controllers/budgets_controller.dart';
+import 'package:mono_app/controllers/budgets_controller.dart';
 
 
 class BudgetsBinding extends Bindings {

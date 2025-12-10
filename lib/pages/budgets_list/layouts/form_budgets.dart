@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:get/get.dart';
-import 'package:mono_app/pages/budgets_list/controllers/budgets_controller.dart';
+import 'package:mono_app/controllers/budgets_controller.dart';
 import 'package:mono_app/size_config.dart';
 import 'package:mono_app/enums/category_enum.dart';
 
@@ -48,7 +48,7 @@ class FormBudgets extends StatelessWidget {
                   TextFormField(
                     keyboardType:
                         const TextInputType.numberWithOptions(decimal: true),
-                    controller: controller.amounController,
+                    controller: controller.amountController,
                     style: const TextStyle(fontSize: 14),
                     decoration: const InputDecoration(
                       labelText: 'Jumlah',

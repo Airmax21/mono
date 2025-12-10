@@ -12,7 +12,7 @@ class BudgetsDao extends DatabaseAccessor<DBConnection> with _$BudgetsDaoMixin {
 
   Stream<List<Budget>> watchAllBudgets() => select(budgets).watch();
 
-  Future<List<Budget>> getBudgetsByFilter(String? category) {
+  Future<List<Budget>> getBudgetsByFilter({String? category}) {
     final query = select(budgets);
 
     if (category != null && category.isNotEmpty) {
@@ -34,7 +34,11 @@ class BudgetsDao extends DatabaseAccessor<DBConnection> with _$BudgetsDaoMixin {
     return query.watch();
   }
 
-  Future<void> insertBudget(BudgetsCompanion data) => into(budgets).insert(data);
+  Future<Budget> getBudgetByID({required String id}) =>
+      (select(budgets)..where((tbl) => tbl.id.equals(id))).getSingle();
+
+  Future<void> insertBudget(BudgetsCompanion data) =>
+      into(budgets).insert(data);
 
   Future<bool> updateBudget(BudgetsCompanion data) =>
       update(budgets).replace(data);

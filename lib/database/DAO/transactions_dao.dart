@@ -5,12 +5,14 @@ import 'package:mono_app/database/entity/transactions.dart';
 part 'transactions_dao.g.dart';
 
 @DriftAccessor(tables: [Transactions])
-class TransactionsDAO extends DatabaseAccessor<DBConnection> with _$TransactionsDAOMixin {
+class TransactionsDAO extends DatabaseAccessor<DBConnection>
+    with _$TransactionsDAOMixin {
   TransactionsDAO(super.db);
 
   Future<List<Transaction>> getAllTransactions() => select(transactions).get();
 
-  Stream<List<Transaction>> watchAllTransactions() => select(transactions).watch();
+  Stream<List<Transaction>> watchAllTransactions() =>
+      select(transactions).watch();
 
   Future<List<Transaction>> getTransactionsByFilter({
     String? name,
@@ -46,7 +48,11 @@ class TransactionsDAO extends DatabaseAccessor<DBConnection> with _$Transactions
     return query.watch();
   }
 
-  Future<void> insertTransactions(TransactionsCompanion data) => into(transactions).insert(data);
+  Future<Transaction> getTransactionById({required String id}) =>
+      (select(transactions)..where((tbl) => tbl.id.equals(id))).getSingle();
+
+  Future<void> insertTransactions(TransactionsCompanion data) =>
+      into(transactions).insert(data);
 
   Future<bool> updateTransactions(TransactionsCompanion data) =>
       update(transactions).replace(data);

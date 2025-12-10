@@ -46,6 +46,9 @@ class WalletDao extends DatabaseAccessor<DBConnection> with _$WalletDaoMixin {
     return query.watch();
   }
 
+  Future<WalletData> getWalletByID({required String id}) =>
+      (select(wallet)..where((t) => t.id.equals(id))).getSingle();
+
   Future<void> insertWallet(WalletCompanion data) => into(wallet).insert(data);
 
   Future<bool> updateWallet(WalletCompanion data) =>

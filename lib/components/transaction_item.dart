@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:swipe_to/swipe_to.dart';
 
 class TransactionItem extends StatelessWidget {
   final IconData icons;
@@ -8,6 +9,10 @@ class TransactionItem extends StatelessWidget {
   final double amount;
   final bool isIncome;
   final DateTime date;
+  final int index;
+  final VoidCallback onDelete;
+  final VoidCallback onEdit;
+  final bool isSwipeAble;
 
   const TransactionItem({
     super.key,
@@ -16,10 +21,13 @@ class TransactionItem extends StatelessWidget {
     required this.amount,
     required this.isIncome,
     required this.date,
+    required this.index,
+    required this.onDelete,
+    required this.onEdit,
+    this.isSwipeAble = false,
   });
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildTransactionContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
@@ -36,7 +44,7 @@ class TransactionItem extends StatelessWidget {
                 Text(title,
                     style: Get.textTheme.bodySmall
                         ?.copyWith(fontWeight: FontWeight.w500)),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(DateFormat('dd MMMM yyyy HH:mm').format(date),
                     style: Get.textTheme.bodySmall
                         ?.copyWith(fontSize: 12, color: Colors.grey[600])),
@@ -58,5 +66,27 @@ class TransactionItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final content = _buildTransactionContent(context);
+
+    if (isSwipeAble) {
+      return SwipeTo(
+        key: ValueKey(index),
+        offsetDx: 0.25,
+        iconOnRightSwipe: Icons.edit,
+        leftSwipeWidget: const Icon(
+          Icons.delete,
+          color: Colors.red,
+        ),
+        onRightSwipe: (details) => onEdit(),
+        onLeftSwipe: (details) => onDelete(),
+        child: content,
+      );
+    }
+
+    return content;
   }
 }

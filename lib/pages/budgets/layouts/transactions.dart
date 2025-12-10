@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:mono_app/components/transaction_item.dart';
 import 'package:mono_app/enums/category_enum.dart';
 import 'package:mono_app/enums/transaction_type_enum.dart';
-import 'package:mono_app/pages/transactions/controllers/transactions_controller.dart';
+import 'package:mono_app/controllers/transactions_controller.dart';
 import 'package:mono_app/size_config.dart';
 
 class Transactions extends StatelessWidget {
@@ -29,12 +29,14 @@ class Transactions extends StatelessWidget {
             height: getProportionateScreenHeight(15),
           ),
           Obx(() {
-            final grouped = groupBy(
-                transactionsController.transactions, (tx) => DateFormat('dd MMMM yyyy').format(tx.createdAt));
-            return ListView(
+            final grouped = groupBy(transactionsController.transactions,
+                (tx) => DateFormat('dd MMMM yyyy').format(tx.createdAt));
+            return ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              children: grouped.entries.map((entry) {
+              itemCount: grouped.length,
+              itemBuilder: (BuildContext context, int index) {
+                final entry = grouped.entries.elementAt(index);
                 final date = entry.key;
                 final txs = entry.value;
 
@@ -50,23 +52,23 @@ class Transactions extends StatelessWidget {
                       ),
                     ),
                     ...txs.map((tx) {
-                      return Column(
-                        children: [
-                          TransactionItem(
-                            icons:
-                                categoryIcon[tx.category] ?? Icons.help_outline,
-                            title: tx.name,
-                            amount: tx.price,
-                            isIncome:
-                                tx.transactionType == TransactionType.income,
-                            date: tx.createdAt,
-                          ),
-                        ],
+                      return TransactionItem(
+                        icons: categoryIcon[tx.category] ?? Icons.help_outline,
+                        title: tx.name,
+                        amount: tx.price,
+                        isIncome: tx.transactionType == TransactionType.income,
+                        date: tx.createdAt,
+                        index: index,
+                        onDelete: () =>
+                            transactionsController.deleteTransaction(tx),
+                        onEdit: () =>
+                            Get.toNamed('/transactions', arguments: tx.id),
+                        isSwipeAble: true,
                       );
                     })
                   ],
                 );
-              }).toList(),
+              },
             );
           })
         ],

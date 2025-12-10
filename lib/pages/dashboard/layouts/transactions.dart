@@ -3,7 +3,7 @@ import 'package:mono_app/components/transaction_item.dart';
 import 'package:get/get.dart';
 import 'package:mono_app/enums/category_enum.dart';
 import 'package:mono_app/enums/transaction_type_enum.dart';
-import 'package:mono_app/pages/transactions/controllers/transactions_controller.dart';
+import 'package:mono_app/controllers/transactions_controller.dart';
 import 'package:mono_app/size_config.dart';
 
 class Transactions extends StatelessWidget {
@@ -45,9 +45,13 @@ class Transactions extends StatelessWidget {
               child: Obx(() {
                 final transactions = transactionsController.transactions;
 
-                return Column(
-                  children: transactions.map((transaction) {
-                    debugPrint('Transactions $transaction');
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: transactions.length,
+                  itemBuilder: (context, index) {
+                    final transaction = transactions[index];
+
                     return Column(
                       children: [
                         TransactionItem(
@@ -58,12 +62,15 @@ class Transactions extends StatelessWidget {
                           isIncome: transaction.transactionType ==
                               TransactionType.income,
                           date: transaction.createdAt,
+                          index: index,
+                          onDelete: () {},
+                          onEdit: () {},
                         ),
                         if (transaction != transactions.last)
                           const Divider(thickness: 2, color: Colors.white12),
                       ],
                     );
-                  }).toList(),
+                  },
                 );
               }))
         ],
