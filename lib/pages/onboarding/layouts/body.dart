@@ -10,7 +10,7 @@ class Body extends StatelessWidget {
     // TODO: implement build
     return Stack(
       children: [
-        ImageOnboarding(),
+        const ImageOnboarding(),
         Align(
           alignment: Alignment.bottomCenter,
           child: ContainerOnboarding()

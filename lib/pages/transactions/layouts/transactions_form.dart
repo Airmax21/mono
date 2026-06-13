@@ -18,7 +18,7 @@ class TransactionsForm extends GetView<TransactionsController> {
   // Fungsi yang membangun konten Form utama
   Widget _buildFormContent() {
     return Padding(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Form(
             key: controller.formKey,
             child: Column(
@@ -28,17 +28,17 @@ class TransactionsForm extends GetView<TransactionsController> {
                   controller: controller.nameController,
                   style: const TextStyle(fontSize: 14),
                   decoration:
-                      const InputDecoration(labelText: 'Nama Transaksi'),
+                      InputDecoration(labelText: 'transaction_name'.tr),
                   validator: (value) =>
-                      value == null || value.isEmpty ? 'Wajib diisi' : null,
+                      value == null || value.isEmpty ? 'field_required'.tr : null,
                 ),
                 SizedBox(height: getProportionateScreenHeight(30)),
                 Obx(
                   () => DropdownButtonFormField<TransactionType>(
                     style: const TextStyle(fontSize: 14),
                     decoration:
-                        const InputDecoration(labelText: 'Type Transaksi'),
-                    value: controller.selectedTransactionType.value,
+                        InputDecoration(labelText: 'transaction_type'.tr),
+                    initialValue: controller.selectedTransactionType.value,
                     items: TransactionType.values.map((transactionsType) {
                       return DropdownMenuItem(
                           value: transactionsType,
@@ -48,7 +48,7 @@ class TransactionsForm extends GetView<TransactionsController> {
                     onChanged: (value) =>
                         controller.selectedTransactionType.value = value,
                     validator: (value) =>
-                        value == null ? 'Pilih type wallet' : null,
+                        value == null ? 'select_transaction_type'.tr : null,
                   ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(30)),
@@ -56,8 +56,8 @@ class TransactionsForm extends GetView<TransactionsController> {
                   () => DropdownButtonFormField<WalletData>(
                     style: const TextStyle(fontSize: 14),
                     decoration:
-                        const InputDecoration(labelText: 'Jenis Wallet'),
-                    value: controller.selectedWallet.value,
+                        InputDecoration(labelText: 'wallet_category'.tr),
+                    initialValue: controller.selectedWallet.value,
                     items: walletController.wallets.map((wallet) {
                       return DropdownMenuItem(
                           value: wallet,
@@ -67,15 +67,15 @@ class TransactionsForm extends GetView<TransactionsController> {
                     onChanged: (value) =>
                         controller.selectedWallet.value = value,
                     validator: (value) =>
-                        value == null ? 'Pilih jenis wallet' : null,
+                        value == null ? 'select_wallet'.tr : null,
                   ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(30)),
                 Obx(
                   () => DropdownButtonFormField<Category>(
                     style: const TextStyle(fontSize: 14),
-                    decoration: const InputDecoration(labelText: 'Category'),
-                    value: controller.selectedCategory.value,
+                    decoration: InputDecoration(labelText: 'category'.tr),
+                    initialValue: controller.selectedCategory.value,
                     items: Category.values.map((category) {
                       return DropdownMenuItem(
                           value: category,
@@ -85,7 +85,7 @@ class TransactionsForm extends GetView<TransactionsController> {
                     onChanged: (value) =>
                         controller.selectedCategory.value = value,
                     validator: (value) =>
-                        value == null ? 'Pilih category' : null,
+                        value == null ? 'select_category'.tr : null,
                   ),
                 ),
                 SizedBox(height: getProportionateScreenHeight(30)),
@@ -94,8 +94,8 @@ class TransactionsForm extends GetView<TransactionsController> {
                       const TextInputType.numberWithOptions(decimal: true),
                   controller: controller.priceController,
                   style: const TextStyle(fontSize: 14),
-                  decoration: const InputDecoration(
-                    labelText: 'Jumlah',
+                  decoration: InputDecoration(
+                    labelText: 'amount'.tr,
                     prefixText: 'Rp. ',
                   ),
                   inputFormatters: [
@@ -104,9 +104,9 @@ class TransactionsForm extends GetView<TransactionsController> {
                         mantissaLength: 0),
                   ],
                   validator: (value) {
-                    if (value == null || value.isEmpty) return 'Wajib diisi';
+                    if (value == null || value.isEmpty) return 'field_required'.tr;
                     final parsed = double.tryParse(value.replaceAll('.', ''));
-                    if (parsed == null) return 'Harus berupa angka';
+                    if (parsed == null) return 'number_required'.tr;
                     return null;
                   },
                 ),
@@ -127,7 +127,7 @@ class TransactionsForm extends GetView<TransactionsController> {
                       }
                     },
                     child: Text(
-                        id != null ? 'Update Transaksi' : 'Simpan Transaksi'),
+                        id != null ? 'update_transaction'.tr : 'save_transaction'.tr),
                   ),
                 )
               ],

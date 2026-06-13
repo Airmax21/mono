@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:mono_app/database/db_connection.dart';
 import 'package:mono_app/enums/wallet_type_enum.dart';
 import 'package:mono_app/size_config.dart';
@@ -13,8 +14,6 @@ IconData iconForWalletType(WalletType type) {
       return Icons.account_balance;
     case WalletType.ewallet:
       return Icons.account_balance_wallet;
-    default:
-      return Icons.wallet;
   }
 }
 
@@ -26,8 +25,6 @@ Color colorForWalletType(WalletType type) {
       return Colors.blue;
     case WalletType.ewallet:
       return Colors.orange;
-    default:
-      return Colors.grey;
   }
 }
 
@@ -71,11 +68,11 @@ class WalletItem extends StatelessWidget {
                 Container(
                   height: 50,
                   width: 50,
-                  child: Icon(iconForWalletType(wallet.type)),
                   decoration: BoxDecoration(
                     color: colorForWalletType(wallet.type),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
+                  child: Icon(iconForWalletType(wallet.type)),
                 ),
                 SizedBox(width: getProportionateScreenWidth(20)),
                 Expanded(
@@ -87,7 +84,7 @@ class WalletItem extends StatelessWidget {
                         style: Get.textTheme.titleMedium,
                       ),
                       Text(
-                        'Rp ${wallet.balance.toStringAsFixed(2)}',
+                        'Rp ${NumberFormat('#,##0', 'id_ID').format(wallet.balance)}',
                         style: Get.textTheme.bodySmall,
                       ),
                     ],

@@ -13,14 +13,14 @@ class Transactions extends StatelessWidget {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Form Transactions'),
+        title: Text('form_transactions_title'.tr),
         centerTitle: true,
         leading: IconButton(
           onPressed: () => Get.back(),
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
         ),
       ),
-      body: Body(),
+      body: const Body(),
     );
   }
 }

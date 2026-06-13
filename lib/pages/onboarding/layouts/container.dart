@@ -5,7 +5,7 @@ import 'package:mono_app/size_config.dart';
 
 class ContainerOnboarding extends StatelessWidget {
   
-  GetStorage box = GetStorage();
+  final GetStorage box = GetStorage('MoNo');
 
   ContainerOnboarding({super.key});
   
@@ -42,7 +42,7 @@ class ContainerOnboarding extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               box.write('onboarding_read', true);
-              Get.offNamed('/dashboard');
+              Get.offNamed('/login');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor:

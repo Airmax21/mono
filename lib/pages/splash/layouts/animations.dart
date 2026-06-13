@@ -8,7 +8,7 @@ class AnimationControllerX extends GetxController
   late AnimationController textController;
   late Animation<Offset> textAnimation;
   late Animation<double> textOpacity;
-  final GetStorage box = GetStorage();
+  final GetStorage box = GetStorage('MoNo');
 
   @override
   void onInit() async {
@@ -20,11 +20,17 @@ class AnimationControllerX extends GetxController
       duration: const Duration(seconds: 5),
     )..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
-          bool onboardingRead = false;
-          onboardingRead = box.read('onboarding_read') ?? false;
-          onboardingRead
-              ? Get.offNamed('/dashboard')
-              : Get.offNamed('/onboarding');
+          bool onboardingRead = box.read('onboarding_read') ?? false;
+          if (onboardingRead) {
+            final hasRefreshToken = box.read('refresh_token') != null;
+            if (hasRefreshToken) {
+              Get.offNamed('/dashboard');
+            } else {
+              Get.offNamed('/login');
+            }
+          } else {
+            Get.offNamed('/onboarding');
+          }
         }
       });
 

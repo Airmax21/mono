@@ -28,8 +28,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
           _buildNavItem(
               2, '/statistics', Icons.analytics, Icons.analytics_outlined),
           _buildNavItem(3, '/wallets', Icons.wallet, Icons.wallet_outlined),
-          _buildNavItem(4, '/account', Icons.manage_accounts,
-              Icons.manage_accounts_outlined),
+          _buildNavItem(4, '/account', Icons.person,
+              Icons.person_outline),
         ],
       ),
     );
@@ -38,6 +38,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
   Widget _buildNavItem(
       int idx, String route, IconData iconActive, IconData iconOutline) {
     final isActive = idx == pageIndex;
+    final isDark = Get.isDarkMode;
+
+    final activeBgColor = isDark ? Colors.white24 : const Color(0xFF3757CA).withValues(alpha: 0.1);
+    final activeIconColor = isDark ? Colors.white : const Color(0xFF3757CA);
+    final inactiveIconColor = isDark ? const Color(0xFF969EC2) : Colors.black45;
+
     return IconButton(
       onPressed: () => Get.offNamed(route),
       icon: AnimatedContainer(
@@ -45,12 +51,12 @@ class CustomBottomNavigationBar extends StatelessWidget {
         curve: Curves.easeInOut,
         padding: EdgeInsets.all(isActive ? 8 : 4),
         decoration: BoxDecoration(
-          color: isActive ? Colors.white24 : Colors.transparent,
+          color: isActive ? activeBgColor : Colors.transparent,
           shape: BoxShape.circle,
         ),
         child: Icon(
           isActive ? iconActive : iconOutline,
-          color: isActive ? Colors.white : Color(0xFF969EC2),
+          color: isActive ? activeIconColor : inactiveIconColor,
           size: isActive ? 30 : 26,
         ),
       ),

@@ -22,7 +22,7 @@ class Transactions extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Recent Transactions',
+                'recent_transactions'.tr,
                 style: Get.textTheme.titleMedium,
               ),
             ],
@@ -43,7 +43,24 @@ class Transactions extends StatelessWidget {
                 ],
               ),
               child: Obx(() {
-                final transactions = transactionsController.transactions;
+                final allTransactions = transactionsController.transactions;
+                final transactions = allTransactions.take(10).toList();
+
+                if (transactions.isEmpty) {
+                  return SizedBox(
+                    width: double.infinity,
+                    height: 80,
+                    child: Center(
+                      child: Text(
+                        'no_transactions'.tr,
+                        style: Get.textTheme.bodyMedium?.copyWith(
+                          color: Get.isDarkMode ? Colors.white54 : Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  );
+                }
 
                 return ListView.builder(
                   shrinkWrap: true,
@@ -67,7 +84,10 @@ class Transactions extends StatelessWidget {
                           onEdit: () {},
                         ),
                         if (transaction != transactions.last)
-                          const Divider(thickness: 2, color: Colors.white12),
+                          Divider(
+                            thickness: 2, 
+                            color: Get.isDarkMode ? Colors.white12 : Colors.black.withValues(alpha: 0.05),
+                          ),
                       ],
                     );
                   },

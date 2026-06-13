@@ -6,6 +6,8 @@ class TextSplash extends StatelessWidget {
   final AnimationControllerX animationControllerX =
       Get.put(AnimationControllerX());
 
+  TextSplash({super.key});
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

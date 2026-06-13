@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class StatCard extends StatelessWidget {
   final String title;
@@ -22,35 +23,45 @@ class StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Get.isDarkMode;
     return Container(
       width: 170, // Lebar kartu
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        // Warna latar belakang kartu untuk dark mode
-        color: const Color(0xFF2a2d36), 
+        color: Get.theme.primaryColor, 
         borderRadius: BorderRadius.circular(12),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Lingkaran abu-abu di atas
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.grey.withOpacity(0.2),
-            child: icon != null 
-                ? Icon(icon, color: Colors.white70) 
-                : null,
-          ),
-          const SizedBox(height: 20),
+          if (icon != null) ...[
+            CircleAvatar(
+              radius: 22,
+              backgroundColor: Colors.grey.withValues(alpha: 0.2),
+              child: Icon(
+                icon, 
+                color: isDark ? Colors.white70 : Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
 
           // Judul
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+            style: Get.textTheme.titleSmall?.copyWith(
               fontSize: 14,
+              fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 4),
@@ -58,9 +69,9 @@ class StatCard extends StatelessWidget {
           // Subtitle
           Text(
             subtitle,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.6),
+            style: Get.textTheme.bodySmall?.copyWith(
               fontSize: 12,
+              color: isDark ? Colors.white60 : Colors.black54,
             ),
           ),
           const SizedBox(height: 12),
@@ -68,9 +79,9 @@ class StatCard extends StatelessWidget {
           // Nilai utama
           Text(
             mainValue,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.9),
+            style: Get.textTheme.bodyMedium?.copyWith(
               fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 12),

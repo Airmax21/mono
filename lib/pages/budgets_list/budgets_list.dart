@@ -14,7 +14,7 @@ class BudgetsList extends StatelessWidget {
     SizeConfig().init(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Budget List'),
+        title: Text('budget_list_title'.tr),
         leading: IconButton(
           onPressed: () => Get.back(),
           icon: const Icon(Icons.arrow_back),

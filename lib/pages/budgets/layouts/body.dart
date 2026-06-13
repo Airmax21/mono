@@ -14,11 +14,11 @@ class Body extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: getProportionateScreenHeight(10),),
-            MonthlyBudgets(),
+            const MonthlyBudgets(),
             SizedBox(height: getProportionateScreenHeight(10),),
-            SummarySpending(),
+            const SummarySpending(),
             SizedBox(height: getProportionateScreenHeight(10),),
-            Transactions()
+            const Transactions()
           ],
         ),
       ),

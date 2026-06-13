@@ -25,15 +25,15 @@ class FormWallet extends StatelessWidget {
               TextFormField(
                 controller: controller.nameController,
                 style: const TextStyle(fontSize: 14),
-                decoration: const InputDecoration(labelText: 'Nama Wallet'),
+                decoration: InputDecoration(labelText: 'wallet_name'.tr),
                 validator: (value) =>
-                    value == null || value.isEmpty ? 'Harus diisi' : null,
+                    value == null || value.isEmpty ? 'field_required'.tr : null,
               ),
               SizedBox(height: getProportionateScreenHeight(30)),
               Obx(() => DropdownButtonFormField<WalletType>(
                     style: const TextStyle(fontSize: 14),
-                    decoration: const InputDecoration(labelText: 'Tipe Wallet'),
-                    value: controller.selectedType.value,
+                    decoration: InputDecoration(labelText: 'wallet_type'.tr),
+                    initialValue: controller.selectedType.value,
                     items: WalletType.values.map((type) {
                       return DropdownMenuItem(
                         value: type,
@@ -44,14 +44,14 @@ class FormWallet extends StatelessWidget {
                       controller.selectedType.value = value;
                     },
                     validator: (value) =>
-                        value == null ? 'Pilih tipe wallet' : null,
+                        value == null ? 'select_wallet_type'.tr : null,
                   )),
               SizedBox(height: getProportionateScreenHeight(30)),
               Obx(() => DropdownButtonFormField<CurrencyType>(
                     style: const TextStyle(fontSize: 14),
                     decoration:
-                        const InputDecoration(labelText: 'Tipe Currency'),
-                    value: controller.selectedCurrency.value,
+                        InputDecoration(labelText: 'currency_type'.tr),
+                    initialValue: controller.selectedCurrency.value,
                     items: CurrencyType.values.map((type) {
                       return DropdownMenuItem(
                         value: type,
@@ -62,7 +62,7 @@ class FormWallet extends StatelessWidget {
                       controller.selectedCurrency.value = value;
                     },
                     validator: (value) =>
-                        value == null ? 'Pilih tipe wallet' : null,
+                        value == null ? 'select_currency_type'.tr : null,
                   )),
             ],
           ),

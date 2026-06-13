@@ -4,9 +4,23 @@ import 'package:get/get.dart';
 import 'package:mono_app/controllers/budgets_controller.dart';
 import 'package:mono_app/size_config.dart';
 import 'package:mono_app/enums/category_enum.dart';
+import 'package:mono_app/enums/budget_period_enum.dart';
+import 'package:mono_app/database/models.dart';
+import 'package:intl/intl.dart';
 
 class FormBudgets extends StatelessWidget {
-  FormBudgets({super.key});
+  final Budget? budgetToEdit;
+
+  FormBudgets({super.key, this.budgetToEdit}) {
+    if (budgetToEdit != null) {
+      final formatter = NumberFormat.currency(locale: 'id_ID', symbol: '', decimalDigits: 0);
+      controller.amountController.text = formatter.format(budgetToEdit!.amount).trim();
+      controller.selectedCategory.value = budgetToEdit!.category;
+    } else {
+      controller.amountController.text = '0';
+      controller.selectedCategory.value = null;
+    }
+  }
 
   final controller = Get.find<BudgetsController>();
   final _formKey = GlobalKey<FormState>();
@@ -17,7 +31,7 @@ class FormBudgets extends StatelessWidget {
       scrollable: true,
       titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
       contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-      title: const Text('Buat Budgets Baru'),
+      title: Text(budgetToEdit != null ? 'Edit Anggaran' : 'create_new_budget'.tr),
       content: SizedBox(
         width: getProportionateScreenWidth(300),
         height: getProportionateScreenHeight(250),
@@ -30,8 +44,8 @@ class FormBudgets extends StatelessWidget {
                   Obx(
                     () => DropdownButtonFormField<Category>(
                       style: const TextStyle(fontSize: 14),
-                      decoration: const InputDecoration(labelText: 'Category'),
-                      value: controller.selectedCategory.value,
+                      decoration: InputDecoration(labelText: 'category'.tr),
+                      initialValue: controller.selectedCategory.value,
                       items: Category.values.map((category) {
                         return DropdownMenuItem(
                             value: category,
@@ -41,7 +55,7 @@ class FormBudgets extends StatelessWidget {
                       onChanged: (value) =>
                           controller.selectedCategory.value = value,
                       validator: (value) =>
-                          value == null ? 'Pilih category' : null,
+                          value == null ? 'select_category'.tr : null,
                     ),
                   ),
                   SizedBox(height: getProportionateScreenHeight(30)),
@@ -50,8 +64,8 @@ class FormBudgets extends StatelessWidget {
                         const TextInputType.numberWithOptions(decimal: true),
                     controller: controller.amountController,
                     style: const TextStyle(fontSize: 14),
-                    decoration: const InputDecoration(
-                      labelText: 'Jumlah',
+                    decoration: InputDecoration(
+                      labelText: 'amount'.tr,
                       prefixText: 'Rp. ',
                     ),
                     inputFormatters: [
@@ -60,9 +74,9 @@ class FormBudgets extends StatelessWidget {
                           mantissaLength: 0),
                     ],
                     validator: (value) {
-                      if (value == null || value.isEmpty) return 'Wajib diisi';
+                      if (value == null || value.isEmpty) return 'field_required'.tr;
                       final parsed = double.tryParse(value.replaceAll('.', ''));
-                      if (parsed == null) return 'Harus berupa angka';
+                      if (parsed == null) return 'number_required'.tr;
                       return null;
                     },
                   ),
@@ -75,7 +89,7 @@ class FormBudgets extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Get.back(),
-          child: const Text('Batal'),
+          child: Text('cancel'.tr),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -84,20 +98,36 @@ class FormBudgets extends StatelessWidget {
             ),
           ),
           onPressed: () {
-            // if (_formKey.currentState!.validate() &&
-            //     controller.selectedType.value != null &&
-            //     controller.selectedCurrency.value != null) {
-            //   controller.addWallet(
-            //       name: _nameController.text,
-            //       type: controller.selectedType.value!,
-            //       currency: controller.selectedCurrency.value!);
+            if (_formKey.currentState!.validate() &&
+                controller.selectedCategory.value != null) {
+              final amountText = controller.amountController.text.replaceAll('.', '');
+              final amount = double.tryParse(amountText) ?? 0.0;
+              
+              if (budgetToEdit != null) {
+                controller.updateBudgets(
+                  id: budgetToEdit!.id,
+                  walletId: budgetToEdit!.walletId,
+                  amount: amount,
+                  period: BudgetPeriod.monthly,
+                  category: controller.selectedCategory.value!,
+                  startDate: budgetToEdit!.startDate,
+                  endDate: budgetToEdit!.endDate,
+                );
+              } else {
+                controller.addBudgets(
+                  amount: amount,
+                  period: BudgetPeriod.monthly,
+                  category: controller.selectedCategory.value!,
+                  startDate: DateTime.now(),
+                );
+              }
 
-            //   _nameController.clear();
-            //   controller.selectedType.value = null;
-            //   Get.back();
-            // }
+              controller.amountController.text = '0';
+              controller.selectedCategory.value = null;
+              Get.back();
+            }
           },
-          child: const Text('Simpan'),
+          child: Text('save'.tr),
         ),
       ],
     );

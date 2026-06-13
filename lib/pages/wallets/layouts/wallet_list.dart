@@ -11,12 +11,12 @@ class WalletList extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<WalletController>();
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Wallets',
+            'wallets'.tr,
             style: Get.textTheme.titleMedium,
           ),
           SizedBox(
@@ -26,11 +26,11 @@ class WalletList extends StatelessWidget {
             () {
               final wallets = controller.wallets;
               if (wallets.isEmpty) {
-                return const Center(child: Text('Belum ada wallet'));
+                return Center(child: Text('no_wallets'.tr));
               }
               return ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: wallets.length,
                 itemBuilder: (context, index) {
                   final wallet = wallets[index];

@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:flutter/material.dart';
 
 enum Category {
@@ -120,14 +119,3 @@ Map<Category, Color> categoryColors = {
   Category.luxury: Colors.amberAccent,
   Category.others: Colors.grey,
 };
-
-class CategoryEnum extends TypeConverter<Category, String> {
-  const CategoryEnum();
-
-  @override
-  Category fromSql(fromDb) =>
-      Category.values.firstWhere((e) => e.name == fromDb);
-
-  @override
-  String toSql(Category value) => value.name;
-}

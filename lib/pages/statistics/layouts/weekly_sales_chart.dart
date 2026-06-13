@@ -1,29 +1,67 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mono_app/controllers/statistics_controller.dart';
 
 class WeeklySalesChart extends StatelessWidget {
   const WeeklySalesChart({super.key});
 
-  final List<double> weeklyData = const [4050, 2650, 4900, 4400];
   final Color barColor = const Color(0xff5501d5);
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.6,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: BarChart(
-          mainBarChartData(),
+    final controller = Get.find<StatisticsController>();
+
+    return Obx(() {
+      final stats = controller.statistics.value;
+      if (controller.isLoading.value && stats == null) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+
+      final rawWeeklyData = stats?.weeklyExpenses ?? [];
+      final List<double> weeklyData = List.generate(4, (index) {
+        if (index < rawWeeklyData.length) {
+          return rawWeeklyData[index];
+        }
+        return 0.0;
+      });
+
+      // Find the maximum value to scale the Y axis properly
+      double maxVal = 1000.0;
+      for (final val in weeklyData) {
+        if (val > maxVal) {
+          maxVal = val;
+        }
+      }
+      
+      // Scale max Y nicely
+      double maxY = 1000.0;
+      if (maxVal > 1000) {
+        maxY = ((maxVal / 1000).ceil() * 1000).toDouble();
+      } else if (maxVal > 100) {
+        maxY = ((maxVal / 100).ceil() * 100).toDouble();
+      }
+
+      return AspectRatio(
+        aspectRatio: 1.6,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: BarChart(
+            mainBarChartData(weeklyData, maxY),
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
-  BarChartData mainBarChartData() {
+  BarChartData mainBarChartData(List<double> weeklyData, double maxY) {
+    double interval = maxY / 5;
+    if (interval <= 0) interval = 200;
+
     return BarChartData(
-      maxY: 5000, // Nilai maksimum untuk sumbu Y
+      maxY: maxY,
       barTouchData: BarTouchData(
         touchTooltipData: BarTouchTooltipData(
           getTooltipItem: (group, groupIndex, rod, rodIndex) {
@@ -44,6 +82,16 @@ class WeeklySalesChart extends StatelessWidget {
               default:
                 throw Error();
             }
+            final val = rod.toY;
+            String formattedValue;
+            if (val >= 1000000) {
+              formattedValue = 'Rp. ${(val / 1000000).toStringAsFixed(1)}M';
+            } else if (val >= 1000) {
+              formattedValue = 'Rp. ${(val / 1000).toStringAsFixed(0)}K';
+            } else {
+              formattedValue = 'Rp. ${val.round()}';
+            }
+
             return BarTooltipItem(
               '$week\n',
               const TextStyle(
@@ -53,7 +101,7 @@ class WeeklySalesChart extends StatelessWidget {
               ),
               children: <TextSpan>[
                 TextSpan(
-                  text: 'Rp.${(rod.toY).round()}',
+                  text: formattedValue,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -64,9 +112,6 @@ class WeeklySalesChart extends StatelessWidget {
             );
           },
         ),
-        touchCallback: (FlTouchEvent event, barTouchResponse) {
-          // Bisa ditambahkan interaksi di sini
-        },
       ),
       titlesData: FlTitlesData(
         show: true,
@@ -86,37 +131,35 @@ class WeeklySalesChart extends StatelessWidget {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 40,
-            getTitlesWidget: getLeftTitles,
-            interval: 1000,
+            reservedSize: 45,
+            getTitlesWidget: (val, meta) => getLeftTitles(val, meta, maxY),
+            interval: interval,
           ),
         ),
       ),
       borderData: FlBorderData(
         show: false,
       ),
-      barGroups: showingGroups(),
+      barGroups: showingGroups(weeklyData),
       gridData: FlGridData(
         show: true,
         drawVerticalLine: false,
-        horizontalInterval: 1000,
+        horizontalInterval: interval,
         getDrawingHorizontalLine: (value) {
           return const FlLine(
             color: Colors.black12,
             strokeWidth: 1,
-            dashArray: [5, 5], // Membuat garis putus-putus
+            dashArray: [5, 5],
           );
         },
       ),
     );
   }
 
-  // Fungsi untuk membuat data batang
-  List<BarChartGroupData> showingGroups() => List.generate(4, (i) {
+  List<BarChartGroupData> showingGroups(List<double> weeklyData) => List.generate(4, (i) {
         return makeGroupData(i, weeklyData[i]);
       });
 
-  // Membuat setiap grup batang
   BarChartGroupData makeGroupData(int x, double y) {
     return BarChartGroupData(
       x: x,
@@ -125,13 +168,12 @@ class WeeklySalesChart extends StatelessWidget {
           toY: y,
           color: barColor,
           width: 22,
-          borderRadius: BorderRadius.circular(6), // Membuat sudut batang melengkung
+          borderRadius: BorderRadius.circular(6),
         ),
       ],
     );
   }
 
-  // Widget untuk label di sumbu bawah (X)
   Widget getBottomTitles(double value, TitleMeta meta) {
     var style = Get.textTheme.labelMedium;
     Widget text;
@@ -159,25 +201,15 @@ class WeeklySalesChart extends StatelessWidget {
     );
   }
 
-  // Widget untuk label di sumbu kiri (Y)
-  Widget getLeftTitles(double value, TitleMeta meta) {
+  Widget getLeftTitles(double value, TitleMeta meta, double maxY) {
     var style = Get.textTheme.labelSmall;
-    String text;
-    if (value == 0) {
-      text = '0';
-    } else if (value == 1000) {
-      text = '1000';
-    } else if (value == 2000) {
-      text = '2000';
-    } else if (value == 3000) {
-      text = '3000';
-    } else if (value == 4000) {
-      text = '4000';
-    } else if (value == 5000) {
-      text = '5000';
-    } else {
-      return Container();
+    String text = value.round().toString();
+    if (value >= 1000000) {
+      text = '${(value / 1000000).toStringAsFixed(1)}M';
+    } else if (value >= 1000) {
+      text = '${(value / 1000).toStringAsFixed(0)}K';
     }
+
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 8,

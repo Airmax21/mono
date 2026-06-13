@@ -17,10 +17,10 @@ class Dashboard extends StatelessWidget {
       body: const Body(),
       extendBody: true,
       bottomNavigationBar:
-          SafeArea(child: CustomBottomNavigationBar(pageIndex: 0)),
+          const SafeArea(child: CustomBottomNavigationBar(pageIndex: 0)),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed('/transactions'),
-        child: Icon(Icons.add)
+        child: const Icon(Icons.add)
       ),
     );
   }

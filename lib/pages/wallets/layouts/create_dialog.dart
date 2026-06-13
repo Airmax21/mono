@@ -15,12 +15,12 @@ class CreateDialog extends StatelessWidget {
       scrollable: true,
       titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
       contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-      title: const Text('Buat Wallet Baru'),
+      title: Text('create_new_wallet'.tr),
       content: FormWallet(formKey: controller.formKey),
       actions: [
         TextButton(
           onPressed: () => Get.back(),
-          child: const Text('Batal'),
+          child: Text('cancel'.tr),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -31,7 +31,7 @@ class CreateDialog extends StatelessWidget {
           onPressed: () {
             controller.addWallet();
           },
-          child: const Text('Simpan'),
+          child: Text('save'.tr),
         ),
       ],
     );

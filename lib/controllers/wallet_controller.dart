@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:drift/drift.dart' as drift;
+import 'package:mono_app/database/models.dart' as drift;
 import 'package:mono_app/components/delete_dialog.dart';
 import 'package:mono_app/components/edit_dialog.dart';
 import 'package:mono_app/database/db_connection.dart';
@@ -45,7 +45,7 @@ class WalletController extends GetxController {
 
       final wallet = WalletCompanion(
         name: drift.Value(name),
-        type: drift.Value(type!),
+        type: drift.Value(type),
         currency: drift.Value(currency),
       );
 

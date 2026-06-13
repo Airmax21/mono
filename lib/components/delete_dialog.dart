@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class DeleteDialog extends StatelessWidget {
@@ -22,7 +21,7 @@ class DeleteDialog extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       elevation: 8,
-      backgroundColor: Get.theme.dialogBackgroundColor,
+      backgroundColor: Get.theme.colorScheme.surface,
       titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
       contentPadding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
       actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

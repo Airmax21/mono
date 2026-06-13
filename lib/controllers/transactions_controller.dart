@@ -1,8 +1,8 @@
-import 'package:drift/drift.dart' as drift;
+import 'package:mono_app/database/models.dart' as drift;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mono_app/components/delete_dialog.dart';
-import 'package:mono_app/components/edit_dialog.dart';
+import 'package:mono_app/components/warning_dialog.dart';
 import 'package:mono_app/database/db_connection.dart';
 import 'package:mono_app/database/repositories/transactions_repository.dart';
 import 'package:mono_app/database/repositories/wallet_repository.dart';
@@ -19,9 +19,22 @@ class TransactionsController extends GetxController {
   final selectedWallet = Rxn<WalletData>();
   final selectedTransactionType = Rxn<TransactionType>();
   final selectedCategory = Rxn<Category>();
+  final filterDate = Rxn<DateTime>();
 
   final wallets = <WalletData>[].obs;
   final transactions = <Transaction>[].obs;
+
+  List<Transaction> get filteredTransactions {
+    if (filterDate.value == null) {
+      return transactions;
+    }
+    final target = filterDate.value!;
+    return transactions.where((tx) {
+      return tx.createdAt.year == target.year &&
+          tx.createdAt.month == target.month &&
+          tx.createdAt.day == target.day;
+    }).toList();
+  }
   final transactionsType = TransactionType;
 
   final formKey = GlobalKey<FormState>();
@@ -30,9 +43,14 @@ class TransactionsController extends GetxController {
   final isFormLoading = false.obs;
   final isDataLoaded = false.obs;
 
+  final totalBalance = 0.0.obs;
+  final dashboardStatistics = Rxn<TransactionStatistics>();
+  final isLoadingDashboard = false.obs;
+
   @override
   void onInit() {
     super.onInit();
+    filterDate.value = null;
     fetchTransactions();
 
     nameController = TextEditingController();
@@ -50,6 +68,31 @@ class TransactionsController extends GetxController {
   void fetchTransactions() async {
     final result = await repository.getTransactions();
     transactions.assignAll(result);
+    fetchDashboardData();
+  }
+
+  Future<void> fetchDashboardData() async {
+    isLoadingDashboard.value = true;
+    try {
+      final walletList = await walletRepository.getWallets();
+      wallets.assignAll(walletList);
+      double balanceSum = 0.0;
+      for (final w in walletList) {
+        balanceSum += w.balance;
+      }
+      totalBalance.value = balanceSum;
+
+      final now = DateTime.now();
+      final monthStr = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+      final stats = await repository.getTransactionStatistics(month: monthStr);
+      if (stats != null) {
+        dashboardStatistics.value = stats;
+      }
+    } catch (e) {
+      debugPrint('Error fetching dashboard data: $e');
+    } finally {
+      isLoadingDashboard.value = false;
+    }
   }
 
   void addTransaction() async {
@@ -65,17 +108,36 @@ class TransactionsController extends GetxController {
         return;
       }
 
-      final transaction = TransactionsCompanion(
-        name: drift.Value(name),
-        transactionType: drift.Value(type),
-        wallet: drift.Value(wallet.id),
-        price: drift.Value(price),
-        category: drift.Value(category),
-      );
-      await repository.addTransactions(transaction);
-      fetchTransactions();
-      clearFormState();
-      Get.back();
+      Future<void> saveOperation() async {
+        final transaction = TransactionsCompanion(
+          name: drift.Value(name),
+          transactionType: drift.Value(type),
+          wallet: drift.Value(wallet.id),
+          price: drift.Value(price),
+          category: drift.Value(category),
+        );
+        await repository.addTransactions(transaction);
+        fetchTransactions();
+        clearFormState();
+        Get.back();
+      }
+
+      if (type == TransactionType.expense) {
+        final exceed = await _willExceedBudget(category, price);
+        if (exceed) {
+          Get.dialog(
+            WarningDialog(
+              title: 'Batas Anggaran Terlewati',
+              content: 'Transaksi ini akan membuat pengeluaran untuk kategori "${category.name.capitalizeFirst}" melebihi anggaran bulanan Anda. Apakah Anda yakin ingin melanjutkan?',
+              onConfirm: saveOperation,
+            ),
+            barrierDismissible: false,
+          );
+          return;
+        }
+      }
+
+      await saveOperation();
     }
   }
 
@@ -84,7 +146,7 @@ class TransactionsController extends GetxController {
       DeleteDialog(
         title: 'Konfirmasi Hapus',
         content:
-            'Apakah kamu yakin ingin menghapus wallet "${transaction.name}"?',
+            'Apakah kamu yakin ingin menghapus transaksi "${transaction.name}"?',
         onConfirm: () async {
           await repository.deleteTransactions(transaction.id);
           fetchTransactions();
@@ -109,18 +171,37 @@ class TransactionsController extends GetxController {
         return;
       }
 
-      final transaction = TransactionsCompanion(
-        id: drift.Value(id),
-        name: drift.Value(name),
-        transactionType: drift.Value(type),
-        wallet: drift.Value(wallet.id),
-        price: drift.Value(price),
-        category: drift.Value(category),
-      );
-      await repository.updateTransactions(transaction);
-      fetchTransactions();
-      clearFormState();
-      Get.back();
+      Future<void> saveOperation() async {
+        final transaction = TransactionsCompanion(
+          id: drift.Value(id),
+          name: drift.Value(name),
+          transactionType: drift.Value(type),
+          wallet: drift.Value(wallet.id),
+          price: drift.Value(price),
+          category: drift.Value(category),
+        );
+        await repository.updateTransactions(transaction);
+        fetchTransactions();
+        clearFormState();
+        Get.back();
+      }
+
+      if (type == TransactionType.expense) {
+        final exceed = await _willExceedBudget(category, price, excludeTxId: id);
+        if (exceed) {
+          Get.dialog(
+            WarningDialog(
+              title: 'Batas Anggaran Terlewati',
+              content: 'Transaksi ini akan membuat pengeluaran untuk kategori "${category.name.capitalizeFirst}" melebihi anggaran bulanan Anda. Apakah Anda yakin ingin melanjutkan?',
+              onConfirm: saveOperation,
+            ),
+            barrierDismissible: false,
+          );
+          return;
+        }
+      }
+
+      await saveOperation();
     }
   }
 
@@ -154,5 +235,31 @@ class TransactionsController extends GetxController {
     selectedCategory.value = null;
     selectedTransactionType.value = null;
     selectedWallet.value = null;
+  }
+
+  Future<bool> _willExceedBudget(Category category, double newAmount, {String? excludeTxId}) async {
+    try {
+      final api = Get.find<ApiClient>();
+      final budgetsList = await api.getBudgets();
+      
+      // Find budget for this category
+      final budget = budgetsList.firstWhereOrNull((b) => b.category == category);
+      if (budget == null) return false;
+      
+      final now = DateTime.now();
+      var currentSpent = transactions
+          .where((tx) =>
+              tx.transactionType == TransactionType.expense &&
+              tx.category == category &&
+              tx.createdAt.year == now.year &&
+              tx.createdAt.month == now.month &&
+              tx.id != excludeTxId)
+          .fold<double>(0.0, (sum, tx) => sum + tx.price);
+          
+      return (currentSpent + newAmount) > budget.amount;
+    } catch (e) {
+      debugPrint('Error checking budget exceedance: $e');
+      return false;
+    }
   }
 }

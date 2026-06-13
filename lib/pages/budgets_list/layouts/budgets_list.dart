@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mono_app/components/budgets_item.dart';
 import 'package:mono_app/controllers/budgets_controller.dart';
+import 'package:mono_app/pages/budgets_list/layouts/form_budgets.dart';
 
 class BudgetsList extends StatelessWidget {
   const BudgetsList({super.key});
@@ -10,20 +11,20 @@ class BudgetsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<BudgetsController>();
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Obx(() {
             final budgets = controller.budgets;
 
             if (budgets.isEmpty) {
-              return const Center(child: Text('Belum ada wallet'));
+              return Center(child: Text('no_budgets'.tr));
             }
 
             return ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: budgets.length,
                 itemBuilder: (context, index) {
                   final budget = budgets[index];
@@ -31,10 +32,10 @@ class BudgetsList extends StatelessWidget {
                     index: index,
                     budget: budget,
                     onEdit: () {
-                      // controller.editWallet(budget);
+                      Get.dialog(FormBudgets(budgetToEdit: budget));
                     },
                     onDelete: () {
-                      // controller.deleteWallet(budget);
+                      controller.deleteBudget(budget);
                     },
                   );
                 });

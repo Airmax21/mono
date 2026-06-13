@@ -1,44 +1,44 @@
-import 'package:mono_app/database/DAO/budgets_dao.dart';
-import 'package:mono_app/database/db_connection.dart';
+import 'package:mono_app/database/api_client.dart';
+import 'package:mono_app/database/models.dart';
 
 class BudgetsRepository {
-  final BudgetsDao _dao;
+  final ApiClient _api;
 
-  BudgetsRepository(this._dao);
+  BudgetsRepository(this._api);
 
-  Future<List<Budget>> getBudgets() {
-    return _dao.getAllBudgets();
+  Future<List<Budget>> getBudgets() async {
+    return _api.getBudgets();
   }
 
   Stream<List<Budget>> watchBudgets() {
-    return _dao.watchAllBudgets();
+    return Stream.fromFuture(getBudgets());
   }
 
-  Future<List<Budget>> getFilteredBudgets({String? category}) {
-    return _dao.getBudgetsByFilter(category: category);
+  Future<List<Budget>> getFilteredBudgets({String? category}) async {
+    final list = await getBudgets();
+    if (category == null || category.isEmpty) return list;
+    return list.where((item) => item.category.name == category).toList();
   }
 
   Stream<List<Budget>> watchFilteredBudgets({
     String? category,
   }) {
-    return _dao.watchBudgetsByFilter(
-      category: category,
-    );
+    return Stream.fromFuture(getFilteredBudgets(category: category));
   }
 
-  Future<Budget> getBudgetById({required String id}) {
-    return _dao.getBudgetByID(id: id);
+  Future<Budget> getBudgetById({required String id}) async {
+    return _api.getBudgetById(id: id);
   }
 
-  Future<void> addBudgets(BudgetsCompanion data) {
-    return _dao.insertBudget(data);
+  Future<void> addBudgets(BudgetsCompanion data) async {
+    await _api.addBudget(data);
   }
 
-  Future<void> updateBudgets(BudgetsCompanion data) {
-    return _dao.updateBudget(data);
+  Future<void> updateBudgets(BudgetsCompanion data) async {
+    await _api.updateBudget(data);
   }
 
-  Future<void> deleteBudgets(String id) {
-    return _dao.deleteBudget(id);
+  Future<void> deleteBudgets(String id) async {
+    await _api.deleteBudget(id);
   }
 }

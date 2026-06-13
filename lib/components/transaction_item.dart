@@ -83,7 +83,11 @@ class TransactionItem extends StatelessWidget {
         ),
         onRightSwipe: (details) => onEdit(),
         onLeftSwipe: (details) => onDelete(),
-        child: content,
+        child: GestureDetector(
+          onTap: onEdit,
+          onLongPress: onDelete,
+          child: content,
+        ),
       );
     }
 

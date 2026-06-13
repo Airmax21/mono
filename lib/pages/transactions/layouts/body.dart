@@ -1,7 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:mono_app/pages/transactions/layouts/transactions_form.dart';
-import 'package:mono_app/size_config.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});

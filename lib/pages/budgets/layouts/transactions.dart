@@ -21,19 +21,65 @@ class Transactions extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            'Transactions',
-            style: Get.textTheme.titleMedium,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Transactions',
+                style: Get.textTheme.titleMedium,
+              ),
+              Obx(() {
+                final date = transactionsController.filterDate.value;
+                return Row(
+                  children: [
+                    if (date != null)
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        icon: const Icon(Icons.clear, size: 16),
+                        onPressed: () => transactionsController.filterDate.value = null,
+                        tooltip: 'Clear Filter',
+                      ),
+                    if (date != null) const SizedBox(width: 8),
+                    TextButton.icon(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: date ?? DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2100),
+                        );
+                        if (picked != null) {
+                          transactionsController.filterDate.value = picked;
+                        }
+                      },
+                      icon: const Icon(Icons.date_range, size: 14),
+                      label: Text(
+                        date != null
+                            ? DateFormat('dd/MM/yyyy').format(date)
+                            : 'date_filter'.tr,
+                        style: const TextStyle(fontSize: 11),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ],
           ),
           SizedBox(
             height: getProportionateScreenHeight(15),
           ),
           Obx(() {
-            final grouped = groupBy(transactionsController.transactions,
+            final grouped = groupBy(transactionsController.filteredTransactions,
                 (tx) => DateFormat('dd MMMM yyyy').format(tx.createdAt));
             return ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: grouped.length,
               itemBuilder: (BuildContext context, int index) {
                 final entry = grouped.entries.elementAt(index);
@@ -44,7 +90,7 @@ class Transactions extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Text(
                         date,
                         style: Get.textTheme.bodySmall

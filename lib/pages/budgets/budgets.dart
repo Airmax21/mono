@@ -16,10 +16,10 @@ class Budgets extends StatelessWidget {
       body: const Body(),
       extendBody: true,
       bottomNavigationBar:
-          SafeArea(child: CustomBottomNavigationBar(pageIndex: 1)),
+          const SafeArea(child: CustomBottomNavigationBar(pageIndex: 1)),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed('/transactions'),
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
